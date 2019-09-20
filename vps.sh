@@ -17,6 +17,13 @@ then
   sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
 fi
 
+#Disable ipv6
+sudo echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+sudo echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+sudo sysctl -p
+sudo echo "AddressFamily inet" >> /etc/ssh/sshd_config
+sudo systemctl restart sshd
+
 #Clean Yum Cache
 yum clean all
 rm -rf /var/cache/yum

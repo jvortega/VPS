@@ -12,10 +12,6 @@ cyrus-sasl
 cyrus-sasl-plain
 dos2unix
 gdb
-fail2ban
-fail2ban-firewalld
-fail2ban-sendmail
-fail2ban-server
 file
 hdparm
 httpd

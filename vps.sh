@@ -17,13 +17,6 @@ then
   sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
 fi
 
-#Disable ipv6
-sudo echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-sudo echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-sudo sysctl -p
-sudo echo "AddressFamily inet" >> /etc/ssh/sshd_config
-sudo systemctl restart sshd
-
 #Clean Yum Cache
 yum clean all
 rm -rf /var/cache/yum
@@ -53,7 +46,7 @@ wget -P /etc/my.cnf.d/ https://raw.githubusercontent.com/VitalPBX/VPS/master/res
 systemctl start mariadb
 
 # Install VitalPBX pre-requisites
-wget https://raw.githubusercontent.com/VitalPBX/VPS/master/resources/pack_list
+wget https://raw.githubusercontent.com/jvortega/VPS/master/resources/pack_list
 yum -y install $(cat pack_list)
 
 # Install VitalPBX
@@ -78,8 +71,16 @@ systemctl restart httpd
 #Start vpbx-setup.service
 systemctl start vpbx-setup.service
 
-# Enable the http access:
-firewall-cmd --add-service=http
+# Restart fail2ban
+systemctl restart fail2ban.service
+
+# Install Network Manager
+yum -y install NetworkManager
+systemctl start NetworkManager
+
+# Enable the http & ssh access:
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=ssh
 firewall-cmd --reload
 
 # Reboot System to Make Selinux Change Permanently
